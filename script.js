@@ -1,5 +1,5 @@
 const apiKey = "c2e0767cf4af7a9ad2f6701d4bd02de1";
-let currentCity = "Kyiv"; // Изменил на латиницу для стабильной загрузки
+let currentCity = "Kyiv"; 
 
 const uiTranslations = {
     ru: {
