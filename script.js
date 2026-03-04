@@ -195,7 +195,6 @@ function render5Day(list, lang) {
     const container = document.getElementById("fiveDayForecast");
     if (!container) return;
     container.innerHTML = "";
-    // Фильтруем прогноз, чтобы брать данные на полдень каждого дня
     const daily = list.filter(i => i.dt_txt.includes("12:00:00"));
     daily.forEach(item => {
         const day = new Date(item.dt * 1000).toLocaleDateString(lang, { weekday: 'short', day: 'numeric' });
@@ -209,7 +208,6 @@ function render5Day(list, lang) {
     });
 }
 
-// ФУНКЦИИ ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК (ВЕРНУЛ)
 document.getElementById("btnToday").onclick = () => {
     document.getElementById("today-view").classList.add("active");
     document.getElementById("forecast-view").classList.remove("active");
@@ -224,7 +222,6 @@ document.getElementById("btn5Days").onclick = () => {
     document.getElementById("btnToday").classList.remove("active");
 };
 
-// ПОИСК
 function search() {
     const val = document.getElementById("cityInput").value.trim();
     if(val) { currentCity = val; checkWeather(); }
@@ -235,5 +232,4 @@ document.getElementById("cityInput").onkeydown = e => { if(e.key === "Enter") se
 document.getElementById("langSelect").onchange = checkWeather;
 document.getElementById("unitSelect").onchange = checkWeather;
 
-// Запуск приложения
 checkWeather();
