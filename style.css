@@ -1,0 +1,226 @@
+:root {
+    --glass-vibrant: rgba(255, 255, 255, 0.18);
+    --glass-border: rgba(255, 255, 255, 0.4);
+    --nav-height: 54px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+body {
+    background: linear-gradient(160deg, #4facfe 0%, #00f2fe 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    color: white;
+}
+
+.sf-wrapper { 
+    width: 100%; 
+    max-width: 1200px; 
+    margin: 0 auto; 
+}
+
+/* Шапка и поиск */
+.apple-nav { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    gap: 15px; 
+    margin-bottom: 30px; 
+}
+
+.glass-strong { 
+    background: rgba(255, 255, 255, 0.25); 
+    backdrop-filter: blur(15px); 
+    border: 1.5px solid var(--glass-border); 
+    border-radius: 27px; 
+}
+
+.search-container { 
+    display: flex; 
+    flex: 1; 
+    height: var(--nav-height); 
+    padding: 0 8px 0 20px; 
+    align-items: center; 
+}
+
+.search-container input { 
+    background: transparent; 
+    border: none; 
+    color: white; 
+    width: 100%; 
+    outline: none; 
+    font-size: 16px; 
+}
+.search-container input::placeholder { color: rgba(255, 255, 255, 0.7); }
+
+.search-icon-btn { 
+    background: rgba(255, 255, 255, 0.2); 
+    border: none; 
+    width: 40px; 
+    height: 40px; 
+    border-radius: 50%; 
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    transition: 0.3s;
+}
+.search-icon-btn:hover { background: rgba(255, 255, 255, 0.4); }
+.search-icon-btn svg { width: 18px; height: 18px; }
+
+/* Селектор языков */
+.quick-settings { display: flex; gap: 12px; }
+.sf-select { 
+    color: white; 
+    width: 58px; 
+    height: 54px; 
+    border-radius: 27px !important; 
+    border: 1.5px solid var(--glass-border); 
+    appearance: none; 
+    text-align: center; 
+    cursor: pointer; 
+    font-weight: 600; 
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(15px);
+}
+.sf-select option { background: #35a8ff; color: white; }
+
+/* Табы */
+.ios-tabs { display: flex; justify-content: center; margin-bottom: 30px; }
+.tabs-bg { padding: 5px; display: flex; width: 280px; }
+.tab-btn { 
+    flex: 1; 
+    border: none; 
+    background: transparent; 
+    color: white; 
+    padding: 12px; 
+    border-radius: 20px; 
+    cursor: pointer; 
+    font-weight: 600; 
+    transition: 0.3s; 
+}
+.tab-btn.active { background: white; color: #007aff; }
+
+/* Сетка */
+.content-grid { display: none; grid-template-columns: 1fr 1.8fr; gap: 25px; }
+.content-grid.active { display: grid; }
+.full-width { grid-column: span 2; }
+
+/* --- ОБНОВЛЕННАЯ ГЛАВНАЯ КАРТОЧКА --- */
+.hero-card { 
+    text-align: center; 
+    padding: 30px 20px; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center;
+    justify-content: center; /* Центрируем по вертикали */
+    gap: 20px; /* Равномерный отступ между элементами */
+    border-radius: 32px; 
+    background: var(--glass-vibrant); 
+    backdrop-filter: blur(40px); 
+    border: 2px solid var(--glass-border); 
+}
+
+.hero-header h1 {
+    font-size: 42px; /* Крупнее название города */
+    font-weight: 700;
+    margin-bottom: 5px;
+    letter-spacing: -1px;
+    line-height: 1.1;
+}
+.sf-date {
+    font-size: 16px;
+    opacity: 0.9;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.hero-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+/* Иконка */
+.icon-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+}
+.main-icon { 
+    width: 190px; /* Увеличена, чтобы заполнить пустоту */
+    height: 190px; 
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15)); /* Тень для объема */
+}
+.floating { animation: float 5s ease-in-out infinite; }
+@keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+
+/* Температура и описание */
+.temp-wrapper { display: flex; flex-direction: column; align-items: center; }
+.temp-flex { display: flex; align-items: flex-start; line-height: 1; margin-bottom: 5px; }
+#temp { font-size: 96px; font-weight: 300; letter-spacing: -4px; }
+.degree-top { font-size: 40px; margin-top: 10px; font-weight: 300; }
+.sf-desc { font-size: 20px; text-transform: capitalize; font-weight: 500; margin-bottom: 5px; }
+.feels-like { font-size: 15px; opacity: 0.8; font-weight: 400; }
+
+
+/* --- ВИДЖЕТЫ --- */
+.widgets-container { display: flex; flex-direction: column; gap: 25px; }
+.widget { 
+    padding: 25px; 
+    border-radius: 32px; 
+    background: var(--glass-vibrant); 
+    backdrop-filter: blur(40px); 
+    border: 2px solid var(--glass-border); 
+}
+.widget-title { font-size: 12px; text-transform: uppercase; opacity: 0.7; margin-bottom: 15px; letter-spacing: 1px; font-weight: 600; }
+.small-widgets { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+
+/* Почасовой */
+.hourly-scroll { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+.hour-item { min-width: 85px; text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 20px; }
+
+/* Солнце */
+.sun-info { display: flex; flex-direction: column; gap: 10px; }
+.sun-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
+.sun-row:last-child { border-bottom: none; }
+
+/* Воздух */
+.aqi-status { font-weight: 600; font-size: 18px; margin-bottom: 5px; }
+.aqi-bar { height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden; margin: 10px 0; }
+#aqi-progress { height: 100%; transition: 1s; width: 0%; }
+.aqi-desc { font-size: 12px; opacity: 0.7; }
+
+/* Комфорт */
+.comfort-grid { display: flex; flex-direction: column; }
+.c-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    font-size: 15px;
+}
+.c-item:last-child { border-bottom: none; }
+.c-item span { opacity: 0.8; font-weight: 400; }
+.c-item b { font-weight: 600; }
+
+/* Прогноз */
+.forecast-list { display: flex; flex-direction: column; gap: 12px; }
+.forecast-item { 
+    display: grid; 
+    grid-template-columns: 1.2fr 1fr 2fr 1fr; 
+    align-items: center; 
+    padding: 15px; 
+    background: rgba(255,255,255,0.05); 
+    border-radius: 20px; 
+}
+
+@media (max-width: 850px) { 
+    .content-grid { grid-template-columns: 1fr; } 
+    .full-width { grid-column: span 1; }
+}

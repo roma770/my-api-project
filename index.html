@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sinoptik Roman| 2025</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="sf-wrapper">
+        <header class="apple-nav">
+            <div class="search-container glass-strong">
+                <input type="text" id="cityInput" data-i18n-placeholder="search" placeholder="Поиск города..." autocomplete="off">
+                <button id="searchBtn" class="search-icon-btn">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M21 21L16.65 16.65" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="quick-settings">
+                <select id="langSelect" class="sf-select glass-strong">
+                    <option value="ru">RU</option>
+                    <option value="en">EN</option>
+                    <option value="de">DE</option>
+                    <option value="fr">FR</option>
+                    <option value="es">ES</option>
+                    <option value="it">IT</option>
+                </select>
+                <select id="unitSelect" class="sf-select glass-strong">
+                    <option value="metric">°C</option>
+                    <option value="imperial">°F</option>
+                </select>
+            </div>
+        </header>
+
+        <nav class="ios-tabs">
+            <div class="tabs-bg glass-strong">
+                <button class="tab-btn active" id="btnToday" data-i18n="today">Сегодня</button>
+                <button class="tab-btn" id="btn5Days" data-i18n="days5">5 дней</button>
+            </div>
+        </nav>
+
+        <main id="today-view" class="content-grid active">
+            <section class="hero-card glass-vibrant">
+                <div class="hero-header">
+                    <h1 id="cityName">--</h1>
+                    <p id="date" class="sf-date">--</p>
+                </div>
+                
+                <div class="hero-visual">
+                    <div class="icon-wrapper">
+                        <img src="" id="weatherIcon" class="main-icon floating">
+                    </div>
+                    <div class="temp-wrapper">
+                        <div class="temp-flex">
+                            <span id="temp">--</span>
+                            <span class="degree-top">°</span>
+                        </div>
+                        <p id="description" class="sf-desc">--</p>
+                        <p class="feels-like">RealFeel <span id="feelsLike">--</span>°</p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="widgets-container">
+                <div class="widget glass-vibrant">
+                    <h3 class="widget-title" data-i18n="hourly">Почасовой прогноз</h3>
+                    <div class="hourly-scroll" id="hourlyList"></div>
+                </div>
+                <div class="small-widgets">
+                    <div class="widget glass-vibrant">
+                        <h3 class="widget-title" data-i18n="sun">Солнце</h3>
+                        <div class="sun-info">
+                            <div class="sun-row">
+                                <span data-i18n="sunrise">Восход</span>
+                                <b id="sunrise">--:--</b>
+                            </div>
+                            <div class="sun-row">
+                                <span data-i18n="sunset">Закат</span>
+                                <b id="sunset">--:--</b>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="widget glass-vibrant">
+                        <h3 class="widget-title" data-i18n="aqi_title">Воздух (AQI)</h3>
+                        <p id="aqi-text" class="aqi-status">--</p>
+                        <div class="aqi-bar"><div id="aqi-progress"></div></div>
+                        <p class="aqi-desc" data-i18n="aqi_desc">Качество воздуха влияет на ваше здоровье.</p>
+                    </div>
+                </div>
+                <div class="widget glass-vibrant">
+                    <h3 class="widget-title" data-i18n="comfort">Детали комфорта</h3>
+                    <div class="comfort-grid">
+                        <div class="c-item"><span data-i18n="humidity">Влажность</span><b id="humidity">--%</b></div>
+                        <div class="c-item"><span data-i18n="wind">Ветер</span><b id="wind">--</b></div>
+                        <div class="c-item"><span data-i18n="pressure">Давление</span><b id="pressure">--</b></div>
+                        <div class="c-item"><span data-i18n="visibility">Видимость</span><b id="visibility">--</b></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <main id="forecast-view" class="content-grid">
+            <div class="widget glass-vibrant full-width">
+                <h3 class="widget-title" data-i18n="forecast_title">Прогноз на 5 дней</h3>
+                <div id="fiveDayForecast" class="forecast-list"></div>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
