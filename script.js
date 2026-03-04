@@ -1,5 +1,5 @@
 const apiKey = "c2e0767cf4af7a9ad2f6701d4bd02de1";
-let currentCity = "Kyiv"; 
+let currentCity = "Kyiv";
 
 const uiTranslations = {
     ru: {
@@ -16,7 +16,7 @@ const uiTranslations = {
         humidity: "Влажность",
         wind: "Ветер",
         pressure: "Давление",
-        visibility: "Visibility",
+        visibility: "Видимость",
         forecast_title: "Прогноз на 5 дней",
         aqi_states: ["Отлично", "Хорошо", "Средне", "Плохо", "Вредно"]
     },
@@ -38,7 +38,78 @@ const uiTranslations = {
         forecast_title: "5-Day Forecast",
         aqi_states: ["Excellent", "Good", "Moderate", "Poor", "Hazardous"]
     },
-    // ... остальные языки (de, fr, es, it) остаются без изменений
+    de: {
+        search: "Stadt suchen...",
+        today: "Heute",
+        days5: "5 Tage",
+        hourly: "Stündliche Vorhersage",
+        sun: "Sonne",
+        sunrise: "Sonnenaufgang",
+        sunset: "Sonnenuntergang",
+        aqi_title: "Luftqualität (AQI)",
+        aqi_desc: "Luftqualität beeinflusst Ihre Gesundheit.",
+        comfort: "Komfortdetails",
+        humidity: "Feuchtigkeit",
+        wind: "Wind",
+        pressure: "Druck",
+        visibility: "Sichtweite",
+        forecast_title: "5-Tage-Vorhersage",
+        aqi_states: ["Ausgezeichnet", "Gut", "Mittel", "Schlecht", "Gefährlich"]
+    },
+    fr: {
+        search: "Rechercher...",
+        today: "Aujourd'hui",
+        days5: "5 Jours",
+        hourly: "Prévisions horaires",
+        sun: "Soleil",
+        sunrise: "Lever",
+        sunset: "Coucher",
+        aqi_title: "Qualité de l'air (AQI)",
+        aqi_desc: "La qualité de l'air affecte votre santé.",
+        comfort: "Détails de confort",
+        humidity: "Humidité",
+        wind: "Vent",
+        pressure: "Pression",
+        visibility: "Visibilité",
+        forecast_title: "Prévisions sur 5 jours",
+        aqi_states: ["Excellent", "Bon", "Modéré", "Mauvais", "Dangereux"]
+    },
+    es: {
+        search: "Buscar ciudad...",
+        today: "Hoy",
+        days5: "5 Días",
+        hourly: "Pronóstico por hora",
+        sun: "Sol",
+        sunrise: "Amanecer",
+        sunset: "Atardecer",
+        aqi_title: "Calidad del aire (AQI)",
+        aqi_desc: "La calidad del aire afecta su salud.",
+        comfort: "Detalles de confort",
+        humidity: "Humedad",
+        wind: "Viento",
+        pressure: "Presión",
+        visibility: "Visibilidad",
+        forecast_title: "Pronóstico de 5 días",
+        aqi_states: ["Excelente", "Bueno", "Moderado", "Malo", "Peligroso"]
+    },
+    it: {
+        search: "Cerca città...",
+        today: "Oggi",
+        days5: "5 Giorni",
+        hourly: "Previsioni orarie",
+        sun: "Sole",
+        sunrise: "Alba",
+        sunset: "Tramonto",
+        aqi_title: "Qualité de l'air (AQI)",
+        aqi_desc: "La qualità dell'aria influisce sulla salute.",
+        comfort: "Dettagli comfort",
+        humidity: "Umidità",
+        wind: "Vento",
+        pressure: "Pressione",
+        visibility: "Visibilità",
+        forecast_title: "Previsioni 5 giorni",
+        aqi_states: ["Eccellente", "Buono", "Moderato", "Scarso", "Pericoloso"]
+    }
 };
 
 async function checkWeather() {
@@ -48,14 +119,9 @@ async function checkWeather() {
     updateInterfaceLanguage(lang);
 
     try {
-        // Заменены все ссылки на https:// для работы на GitHub Pages
         const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${currentCity}&appid=${apiKey}&units=${units}&lang=${lang}`);
         const data = await res.json();
-        
-        if(data.cod !== 200) {
-            console.error("City not found");
-            return;
-        }
+        if(data.cod !== 200) return;
 
         document.getElementById("cityName").innerText = data.name;
         document.getElementById("temp").innerText = Math.round(data.main.temp);
@@ -80,9 +146,18 @@ async function checkWeather() {
         renderHourly(fData.list);
         render5Day(fData.list, lang);
 
-    } catch (e) { 
-        console.error("Fetch error:", e); 
-    }
+    } catch (e) { console.error(e); }
+}
+
+function updateInterfaceLanguage(lang) {
+    const text = uiTranslations[lang];
+    if (!text) return;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (text[key]) el.innerText = text[key];
+    });
+    const input = document.querySelector('[data-i18n-placeholder]');
+    if(input) input.placeholder = text[input.getAttribute('data-i18n-placeholder')];
 }
 
 async function getAirQuality(lat, lon, lang) {
@@ -120,6 +195,7 @@ function render5Day(list, lang) {
     const container = document.getElementById("fiveDayForecast");
     if (!container) return;
     container.innerHTML = "";
+    // Фильтруем прогноз, чтобы брать данные на полдень каждого дня
     const daily = list.filter(i => i.dt_txt.includes("12:00:00"));
     daily.forEach(item => {
         const day = new Date(item.dt * 1000).toLocaleDateString(lang, { weekday: 'short', day: 'numeric' });
@@ -133,29 +209,31 @@ function render5Day(list, lang) {
     });
 }
 
-// Вспомогательные функции интерфейса
-function updateInterfaceLanguage(lang) {
-    const text = uiTranslations[lang];
-    if (!text) return;
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if (text[key]) el.innerText = text[key];
-    });
-}
+// ФУНКЦИИ ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК (ВЕРНУЛ)
+document.getElementById("btnToday").onclick = () => {
+    document.getElementById("today-view").classList.add("active");
+    document.getElementById("forecast-view").classList.remove("active");
+    document.getElementById("btnToday").classList.add("active");
+    document.getElementById("btn5Days").classList.remove("active");
+};
 
+document.getElementById("btn5Days").onclick = () => {
+    document.getElementById("forecast-view").classList.add("active");
+    document.getElementById("today-view").classList.remove("active");
+    document.getElementById("btn5Days").classList.add("active");
+    document.getElementById("btnToday").classList.remove("active");
+};
+
+// ПОИСК
 function search() {
     const val = document.getElementById("cityInput").value.trim();
-    if(val) { 
-        currentCity = val; 
-        checkWeather(); 
-    }
+    if(val) { currentCity = val; checkWeather(); }
 }
 
-// Привязка событий
 document.getElementById("searchBtn").onclick = search;
 document.getElementById("cityInput").onkeydown = e => { if(e.key === "Enter") search(); };
 document.getElementById("langSelect").onchange = checkWeather;
 document.getElementById("unitSelect").onchange = checkWeather;
 
-// Первый запуск
+// Запуск приложения
 checkWeather();
