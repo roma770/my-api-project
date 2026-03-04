@@ -119,6 +119,7 @@ async function checkWeather() {
     updateInterfaceLanguage(lang);
 
     try {
+        // Заменил http на https
         const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${currentCity}&appid=${apiKey}&units=${units}&lang=${lang}`);
         const data = await res.json();
         if(data.cod !== 200) return;
@@ -141,6 +142,7 @@ async function checkWeather() {
 
         getAirQuality(data.coord.lat, data.coord.lon, lang);
 
+        // Заменил http на https
         const fRes = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${currentCity}&appid=${apiKey}&units=${units}&lang=${lang}`);
         const fData = await fRes.json();
         renderHourly(fData.list);
@@ -161,6 +163,7 @@ function updateInterfaceLanguage(lang) {
 }
 
 async function getAirQuality(lat, lon, lang) {
+    // Заменил http на https
     const res = await fetch(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${apiKey}`);
     const data = await res.json();
     const aqi = data.list[0].main.aqi; 
