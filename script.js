@@ -105,7 +105,7 @@ const uiTranslations = {
         sun: "Sole",
         sunrise: "Alba",
         sunset: "Tramonto",
-        aqi_title: "Qualità dell'aria (AQI)",
+        aqi_title: "Qualité de l'air (AQI)",
         aqi_desc: "La qualità dell'aria influisce sulla salute.",
         comfort: "Dettagli comfort",
         humidity: "Umidità",
