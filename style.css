@@ -211,9 +211,13 @@ body {
     background: rgba(255,255,255,0.05); 
     border-radius: 20px; 
 }
+
+/* ====================================================
+   АДАПТАЦИЯ ДЛЯ ТЕЛЕФОНОВ (ИДЕАЛЬНЫЙ МОБИЛЬНЫЙ ВИД) 
+   ==================================================== */
 @media (max-width: 850px) { 
     body {
-        padding: 10px;
+        padding: 10px; 
         align-items: flex-start; 
     }
 
@@ -279,7 +283,7 @@ body {
     }
 
     .small-widgets {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; 
         gap: 15px;
     }
 
