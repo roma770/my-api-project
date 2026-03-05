@@ -1,5 +1,5 @@
 const apiKey = "c2e0767cf4af7a9ad2f6701d4bd02de1";
-let currentCity = "Киев";
+let currentCity = "Kyiv";
 
 const uiTranslations = {
     ru: {
@@ -18,7 +18,8 @@ const uiTranslations = {
         pressure: "Давление",
         visibility: "Видимость",
         forecast_title: "Прогноз на 5 дней",
-        aqi_states: ["Отлично", "Хорошо", "Средне", "Плохо", "Вредно"]
+        aqi_states: ["Отлично", "Хорошо", "Средне", "Плохо", "Вредно"],
+        not_found: "Город не найден. Проверьте правильность написания!"
     },
     en: {
         search: "Search city...",
@@ -36,7 +37,8 @@ const uiTranslations = {
         pressure: "Pressure",
         visibility: "Visibility",
         forecast_title: "5-Day Forecast",
-        aqi_states: ["Excellent", "Good", "Moderate", "Poor", "Hazardous"]
+        aqi_states: ["Excellent", "Good", "Moderate", "Poor", "Hazardous"],
+        not_found: "City not found. Please check the spelling!"
     },
     de: {
         search: "Stadt suchen...",
@@ -54,7 +56,8 @@ const uiTranslations = {
         pressure: "Druck",
         visibility: "Sichtweite",
         forecast_title: "5-Tage-Vorhersage",
-        aqi_states: ["Ausgezeichnet", "Gut", "Mittel", "Schlecht", "Gefährlich"]
+        aqi_states: ["Ausgezeichnet", "Gut", "Mittel", "Schlecht", "Gefährlich"],
+        not_found: "Stadt nicht gefunden. Bitte überprüfen Sie die Schreibweise!"
     },
     fr: {
         search: "Rechercher...",
@@ -72,7 +75,8 @@ const uiTranslations = {
         pressure: "Pression",
         visibility: "Visibilité",
         forecast_title: "Prévisions sur 5 jours",
-        aqi_states: ["Excellent", "Bon", "Modéré", "Mauvais", "Dangereux"]
+        aqi_states: ["Excellent", "Bon", "Modéré", "Mauvais", "Dangereux"],
+        not_found: "Ville introuvable. Veuillez vérifier l'orthographe!"
     },
     es: {
         search: "Buscar ciudad...",
@@ -90,7 +94,8 @@ const uiTranslations = {
         pressure: "Presión",
         visibility: "Visibilidad",
         forecast_title: "Pronóstico de 5 días",
-        aqi_states: ["Excelente", "Bueno", "Moderado", "Malo", "Peligroso"]
+        aqi_states: ["Excelente", "Bueno", "Moderado", "Malo", "Peligroso"],
+        not_found: "Ciudad no encontrada. ¡Por favor, compruebe la ortografía!"
     },
     it: {
         search: "Cerca città...",
@@ -108,7 +113,8 @@ const uiTranslations = {
         pressure: "Pressione",
         visibility: "Visibilità",
         forecast_title: "Previsioni 5 giorni",
-        aqi_states: ["Eccellente", "Buono", "Moderato", "Scarso", "Pericoloso"]
+        aqi_states: ["Eccellente", "Buono", "Moderato", "Scarso", "Pericoloso"],
+        not_found: "Città non trovata. Controlla l'ortografia!"
     }
 };
 
@@ -121,7 +127,11 @@ async function checkWeather() {
     try {
         const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${currentCity}&appid=${apiKey}&units=${units}&lang=${lang}`);
         const data = await res.json();
-        if(data.cod !== 200) return;
+        
+        if(data.cod != 200) {
+            alert(uiTranslations[lang].not_found);
+            return;
+        }
 
         document.getElementById("cityName").innerText = data.name;
         document.getElementById("temp").innerText = Math.round(data.main.temp);
@@ -183,6 +193,7 @@ async function getAirQuality(lat, lon, lang) {
 
 function renderHourly(list) {
     const container = document.getElementById("hourlyList");
+    if (!container) return;
     container.innerHTML = "";
     list.slice(0, 10).forEach(item => {
         const time = new Date(item.dt * 1000).getHours() + ":00";
@@ -192,6 +203,7 @@ function renderHourly(list) {
 
 function render5Day(list, lang) {
     const container = document.getElementById("fiveDayForecast");
+    if (!container) return;
     container.innerHTML = "";
     const daily = list.filter(i => i.dt_txt.includes("12:00:00"));
     daily.forEach(item => {
@@ -222,8 +234,13 @@ document.getElementById("btn5Days").onclick = () => {
 
 function search() {
     const val = document.getElementById("cityInput").value.trim();
-    if(val) { currentCity = val; checkWeather(); }
+    if(val) { 
+        currentCity = val; 
+        checkWeather(); 
+        document.getElementById("cityInput").value = ""; 
+    }
 }
+
 document.getElementById("searchBtn").onclick = search;
 document.getElementById("cityInput").onkeydown = e => { if(e.key === "Enter") search(); };
 document.getElementById("langSelect").onchange = checkWeather;
