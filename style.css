@@ -15,8 +15,8 @@ body {
     background: linear-gradient(160deg, #4facfe 0%, #00f2fe 100%);
     min-height: 100vh;
     display: flex;
-    justify-content: center;
-    align-items: center;    
+    justify-content: center; 
+    align-items: center;     
     padding: 20px;
     color: white;
 }
@@ -211,25 +211,20 @@ body {
     background: rgba(255,255,255,0.05); 
     border-radius: 20px; 
 }
-
 @media (max-width: 850px) { 
-    .content-grid { 
-        grid-template-columns: 1fr; 
-        gap: 15px; 
-    } 
-    
-    .full-width { 
-        grid-column: span 1; 
+    body {
+        padding: 10px;
+        align-items: flex-start; 
     }
 
-    body {
-        padding: 15px 10px; 
+    .sf-wrapper {
+        margin: 0 auto;
     }
 
     .apple-nav {
         flex-direction: column; 
-        gap: 15px;
-        margin-bottom: 20px;
+        gap: 12px;
+        margin-bottom: 15px;
     }
 
     .search-container {
@@ -238,65 +233,62 @@ body {
 
     .quick-settings {
         width: 100%;
-        justify-content: space-between; 
+        justify-content: center; 
+        gap: 15px; 
     }
 
     .sf-select {
-        flex: 1; 
-        width: auto; 
+        flex: initial; 
+        width: 65px; 
+        height: 45px; 
+        border-radius: 22px !important;
     }
 
-    .tabs-bg {
-        width: 100%; 
-    }
+    .ios-tabs { margin-bottom: 20px; }
+    .tabs-bg { width: 100%; }
+
+    .content-grid { 
+        grid-template-columns: 1fr; 
+        gap: 15px; 
+    } 
+    
+    .full-width { grid-column: span 1; }
 
     .hero-card {
-        padding: 25px 15px;
-    }
-
-    .hero-header h1 {
-        font-size: 34px; 
-    }
-
-    .main-icon {
-        width: 140px; 
-        height: 140px;
-    }
-
-    #temp {
-        font-size: 72px; 
-    }
-
-    .degree-top {
-        font-size: 30px;
-    }
-
-    .widgets-container {
-        gap: 15px;
-    }
-
-    .widget {
-        padding: 20px 15px;
+        padding: 20px 15px; 
+        gap: 10px; 
         border-radius: 24px; 
     }
 
+    .hero-header h1 { font-size: 32px; }
+    .sf-date { font-size: 14px; }
+
+    .main-icon {
+        width: 120px; 
+        height: 120px;
+    }
+
+    #temp { font-size: 70px; }
+    .degree-top { font-size: 28px; }
+    .sf-desc { font-size: 18px; }
+
+    .widgets-container { gap: 15px; }
+    .widget {
+        padding: 15px;
+        border-radius: 20px; 
+    }
+
     .small-widgets {
-        grid-template-columns: 1fr; 
+        grid-template-columns: 1fr;
         gap: 15px;
     }
 
     .forecast-item {
-        grid-template-columns: 1.5fr 1fr 1fr 1fr; 
+        grid-template-columns: 1fr 1fr 2fr 1fr; 
         padding: 12px 10px;
         font-size: 14px; 
     }
 
-    .hourly-scroll {
-        padding-bottom: 15px; 
-    }
-    
-    .hour-item {
-        min-width: 75px; 
-        padding: 10px;
-    }
+    .hourly-scroll { padding-bottom: 10px; }
+    .hour-item { min-width: 70px; padding: 12px 5px; }
 }
