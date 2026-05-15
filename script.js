@@ -1,3 +1,89 @@
+/* ══════════════════════════════════════════════════════
+   КАСТОМНЫЕ ДРОПДАУНЫ — вставить В НАЧАЛО script.js
+   (перед строкой: const apiKey = ...)
+══════════════════════════════════════════════════════ */
+
+/* ── Инициализация кастомных дропдаунов ── */
+function initDropdowns() {
+    const dropdowns = document.querySelectorAll('.sf-dropdown');
+
+    dropdowns.forEach(dropdown => {
+        const trigger = dropdown.querySelector('.sf-dropdown__trigger');
+        const menu    = dropdown.querySelector('.sf-dropdown__menu');
+        const items   = dropdown.querySelectorAll('.sf-dropdown__item');
+
+        // Открыть / закрыть
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpen = dropdown.classList.contains('is-open');
+
+            // Закрыть все остальные
+            document.querySelectorAll('.sf-dropdown.is-open').forEach(d => {
+                if (d !== dropdown) closeDropdown(d);
+            });
+
+            isOpen ? closeDropdown(dropdown) : openDropdown(dropdown);
+        });
+
+        // Выбор пункта
+        items.forEach(item => {
+            item.addEventListener('click', () => {
+                const value = item.dataset.value;
+                const label = item.dataset.label;
+                const flag  = item.dataset.flag || '';
+
+                // Обновить активный
+                items.forEach(i => i.classList.remove('sf-dropdown__item--active'));
+                item.classList.add('sf-dropdown__item--active');
+
+                // Обновить триггер
+                dropdown.dataset.value = value;
+                const labelEl = dropdown.querySelector('.sf-dropdown__label');
+                if (labelEl) labelEl.textContent = label;
+
+                // Обновить иконку флага (только для языкового дропдауна)
+                const iconEl = dropdown.querySelector('.lang-flag');
+                if (iconEl && flag) iconEl.textContent = flag;
+
+                closeDropdown(dropdown);
+
+                // Вызвать обновление погоды
+                checkWeather();
+            });
+        });
+    });
+
+    // Закрыть при клике вне
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.sf-dropdown.is-open').forEach(closeDropdown);
+    });
+
+    // Закрыть при Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.sf-dropdown.is-open').forEach(closeDropdown);
+        }
+    });
+}
+
+function openDropdown(dropdown) {
+    dropdown.classList.add('is-open');
+    const trigger = dropdown.querySelector('.sf-dropdown__trigger');
+    trigger.setAttribute('aria-expanded', 'true');
+}
+
+function closeDropdown(dropdown) {
+    dropdown.classList.remove('is-open');
+    const trigger = dropdown.querySelector('.sf-dropdown__trigger');
+    trigger.setAttribute('aria-expanded', 'false');
+}
+
+/* ── Геттеры значений (вместо document.getElementById("langSelect").value) ── */
+function getLang()  { return document.getElementById('langDropdown').dataset.value || 'ru'; }
+function getUnits() { return document.getElementById('unitDropdown').dataset.value || 'metric'; }
+
+/* Запуск после загрузки DOM */
+document.addEventListener('DOMContentLoaded', initDropdowns);
 const apiKey = "c2e0767cf4af7a9ad2f6701d4bd02de1";
 let currentCity = "Kyiv";
 
@@ -118,6 +204,215 @@ const uiTranslations = {
     }
 };
 
+/* ══════════════════════════════════
+   КРАСИВЫЕ SVG-ИКОНКИ ПОГОДЫ
+══════════════════════════════════ */
+function getWeatherSVG(iconCode) {
+    const isNight = iconCode.endsWith('n');
+    const code = iconCode.replace('d', '').replace('n', '');
+
+    const svgs = {
+        // ☀️ Ясно — день
+        sun: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <radialGradient id="sg" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#FFE566"/>
+                    <stop offset="100%" stop-color="#FF9A00"/>
+                </radialGradient>
+            </defs>
+            <circle cx="32" cy="32" r="12" fill="url(#sg)" class="svg-sun-core"/>
+            <g class="svg-sun-rays" stroke="#FFD230" stroke-width="2.5" stroke-linecap="round">
+                <line x1="32" y1="6"  x2="32" y2="13"/>
+                <line x1="32" y1="51" x2="32" y2="58"/>
+                <line x1="6"  y1="32" x2="13" y2="32"/>
+                <line x1="51" y1="32" x2="58" y2="32"/>
+                <line x1="13.5" y1="13.5" x2="18.5" y2="18.5"/>
+                <line x1="45.5" y1="45.5" x2="50.5" y2="50.5"/>
+                <line x1="50.5" y1="13.5" x2="45.5" y2="18.5"/>
+                <line x1="18.5" y1="45.5" x2="13.5" y2="50.5"/>
+            </g>
+        </svg>`,
+
+        // 🌙 Ясно — ночь
+        moon: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <radialGradient id="mg" cx="40%" cy="30%" r="60%">
+                    <stop offset="0%" stop-color="#E8D5FF"/>
+                    <stop offset="100%" stop-color="#8B5CF6"/>
+                </radialGradient>
+            </defs>
+            <path d="M38 10 C24 14 16 26 20 40 C24 54 38 60 50 56 C36 56 24 46 24 32 C24 20 32 12 44 10 Z"
+                fill="url(#mg)" class="svg-moon"/>
+            <circle cx="46" cy="14" r="1.5" fill="#C4B5FD" opacity="0.8"/>
+            <circle cx="52" cy="22" r="1"   fill="#C4B5FD" opacity="0.6"/>
+            <circle cx="44" cy="20" r="1"   fill="#E8D5FF" opacity="0.5"/>
+        </svg>`,
+
+        // ⛅ Малооблачно
+        fewClouds: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <radialGradient id="sg2" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#FFE566"/>
+                    <stop offset="100%" stop-color="#FF9A00"/>
+                </radialGradient>
+                <linearGradient id="cg2" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#E2E8F0"/>
+                    <stop offset="100%" stop-color="#CBD5E1"/>
+                </linearGradient>
+            </defs>
+            <circle cx="22" cy="26" r="9" fill="url(#sg2)" opacity="0.95"/>
+            <g stroke="#FFD230" stroke-width="2" stroke-linecap="round" opacity="0.7">
+                <line x1="22" y1="10" x2="22" y2="15"/>
+                <line x1="9"  y1="26" x2="14" y2="26"/>
+                <line x1="13" y1="15" x2="17" y2="19"/>
+                <line x1="13" y1="37" x2="17" y2="33"/>
+            </g>
+            <rect x="10" y="34" width="44" height="16" rx="8" fill="url(#cg2)" class="svg-cloud"/>
+            <ellipse cx="30" cy="34" rx="12" ry="10" fill="url(#cg2)" class="svg-cloud"/>
+            <ellipse cx="42" cy="36" rx="9" ry="7" fill="url(#cg2)" class="svg-cloud"/>
+        </svg>`,
+
+        // 🌙⛅ Малооблачно ночью
+        fewCloudsNight: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <radialGradient id="mn" cx="40%" cy="30%" r="60%">
+                    <stop offset="0%" stop-color="#C4B5FD"/>
+                    <stop offset="100%" stop-color="#7C3AED"/>
+                </radialGradient>
+                <linearGradient id="cgn" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#94A3B8"/>
+                    <stop offset="100%" stop-color="#64748B"/>
+                </linearGradient>
+            </defs>
+            <path d="M24 12 C16 15 12 22 14 30 C16 38 24 42 32 40 C24 40 18 34 18 26 C18 18 22 14 28 12 Z"
+                fill="url(#mn)" opacity="0.9"/>
+            <rect x="10" y="34" width="44" height="16" rx="8" fill="url(#cgn)" class="svg-cloud"/>
+            <ellipse cx="30" cy="34" rx="12" ry="10" fill="url(#cgn)" class="svg-cloud"/>
+            <ellipse cx="42" cy="36" rx="9" ry="7" fill="url(#cgn)" class="svg-cloud"/>
+        </svg>`,
+
+        // ☁️ Облачно
+        clouds: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="cg3" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#94A3B8"/>
+                    <stop offset="100%" stop-color="#64748B"/>
+                </linearGradient>
+                <linearGradient id="cg3b" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#CBD5E1"/>
+                    <stop offset="100%" stop-color="#94A3B8"/>
+                </linearGradient>
+            </defs>
+            <ellipse cx="26" cy="30" rx="16" ry="12" fill="url(#cg3)" class="svg-cloud"/>
+            <rect x="8" y="34" width="48" height="16" rx="8" fill="url(#cg3b)" class="svg-cloud"/>
+            <ellipse cx="36" cy="32" rx="14" ry="11" fill="url(#cg3b)" class="svg-cloud"/>
+            <ellipse cx="48" cy="36" rx="10" ry="8" fill="url(#cg3b)" class="svg-cloud"/>
+        </svg>`,
+
+        // 🌧️ Дождь
+        rain: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="rcg" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#64748B"/>
+                    <stop offset="100%" stop-color="#475569"/>
+                </linearGradient>
+            </defs>
+            <ellipse cx="26" cy="24" rx="15" ry="11" fill="url(#rcg)" class="svg-cloud"/>
+            <rect x="8" y="27" width="48" height="14" rx="7" fill="url(#rcg)" class="svg-cloud"/>
+            <ellipse cx="38" cy="26" rx="13" ry="10" fill="url(#rcg)" class="svg-cloud"/>
+            <g class="svg-rain" stroke="#60A5FA" stroke-width="2" stroke-linecap="round">
+                <line x1="20" y1="44" x2="17" y2="54"/>
+                <line x1="30" y1="44" x2="27" y2="54"/>
+                <line x1="40" y1="44" x2="37" y2="54"/>
+                <line x1="50" y1="44" x2="47" y2="54"/>
+                <line x1="25" y1="50" x2="22" y2="60"/>
+                <line x1="45" y1="50" x2="42" y2="60"/>
+            </g>
+        </svg>`,
+
+        // ⛈️ Гроза
+        thunderstorm: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="tg" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#334155"/>
+                    <stop offset="100%" stop-color="#1E293B"/>
+                </linearGradient>
+            </defs>
+            <ellipse cx="26" cy="22" rx="15" ry="11" fill="url(#tg)" class="svg-cloud"/>
+            <rect x="8" y="25" width="48" height="14" rx="7" fill="url(#tg)" class="svg-cloud"/>
+            <ellipse cx="38" cy="24" rx="13" ry="10" fill="url(#tg)" class="svg-cloud"/>
+            <polygon points="35,38 28,50 33,50 27,62 42,46 36,46 41,38" fill="#FDE047" class="svg-bolt"/>
+            <g stroke="#93C5FD" stroke-width="1.5" stroke-linecap="round" opacity="0.6">
+                <line x1="16" y1="42" x2="14" y2="50"/>
+                <line x1="50" y1="42" x2="48" y2="50"/>
+            </g>
+        </svg>`,
+
+        // 🌨️ Снег
+        snow: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="sg3" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#94A3B8"/>
+                    <stop offset="100%" stop-color="#64748B"/>
+                </linearGradient>
+            </defs>
+            <ellipse cx="26" cy="24" rx="15" ry="11" fill="url(#sg3)" class="svg-cloud"/>
+            <rect x="8" y="27" width="48" height="14" rx="7" fill="url(#sg3)" class="svg-cloud"/>
+            <ellipse cx="38" cy="26" rx="13" ry="10" fill="url(#sg3)" class="svg-cloud"/>
+            <g fill="#BAE6FD" class="svg-snow">
+                <circle cx="20" cy="48" r="2.5"/>
+                <circle cx="32" cy="52" r="2.5"/>
+                <circle cx="44" cy="48" r="2.5"/>
+                <circle cx="26" cy="56" r="2"/>
+                <circle cx="38" cy="57" r="2"/>
+            </g>
+        </svg>`,
+
+        // 🌫️ Туман
+        mist: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <g class="svg-mist" stroke="#94A3B8" stroke-width="3" stroke-linecap="round" opacity="0.7">
+                <line x1="10" y1="24" x2="54" y2="24"/>
+                <line x1="16" y1="32" x2="48" y2="32"/>
+                <line x1="10" y1="40" x2="54" y2="40"/>
+                <line x1="18" y1="48" x2="46" y2="48"/>
+            </g>
+        </svg>`,
+
+        // 🌦️ Ливень
+        drizzle: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="dg" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#94A3B8"/>
+                    <stop offset="100%" stop-color="#64748B"/>
+                </linearGradient>
+            </defs>
+            <ellipse cx="26" cy="24" rx="15" ry="11" fill="url(#dg)" class="svg-cloud"/>
+            <rect x="8" y="27" width="48" height="14" rx="7" fill="url(#dg)" class="svg-cloud"/>
+            <ellipse cx="38" cy="26" rx="13" ry="10" fill="url(#dg)" class="svg-cloud"/>
+            <g class="svg-drizzle" stroke="#7DD3FC" stroke-width="1.5" stroke-linecap="round">
+                <line x1="22" y1="44" x2="20" y2="52"/>
+                <line x1="32" y1="44" x2="30" y2="52"/>
+                <line x1="42" y1="44" x2="40" y2="52"/>
+            </g>
+        </svg>`
+    };
+
+    // Маппинг кодов OWM → иконки
+    if (code === '01') return isNight ? svgs.moon : svgs.sun;
+    if (code === '02') return isNight ? svgs.fewCloudsNight : svgs.fewClouds;
+    if (code === '03' || code === '04') return svgs.clouds;
+    if (code === '09') return svgs.drizzle;
+    if (code === '10') return svgs.rain;
+    if (code === '11') return svgs.thunderstorm;
+    if (code === '13') return svgs.snow;
+    if (code === '50') return svgs.mist;
+
+    return isNight ? svgs.moon : svgs.sun;
+}
+
+/* ══════════════════════════════════
+   ОСНОВНАЯ ЛОГИКА
+══════════════════════════════════ */
 async function checkWeather() {
     const lang = document.getElementById("langSelect").value;
     const units = document.getElementById("unitSelect").value;
@@ -137,7 +432,13 @@ async function checkWeather() {
         document.getElementById("temp").innerText = Math.round(data.main.temp);
         document.getElementById("feelsLike").innerText = Math.round(data.main.feels_like);
         document.getElementById("description").innerText = data.weather[0].description;
-        document.getElementById("weatherIcon").src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@4x.png`;
+
+        // Используем SVG вместо PNG для главной иконки
+        const mainIconWrapper = document.getElementById("weatherIcon");
+        if (mainIconWrapper) {
+            mainIconWrapper.outerHTML = `<div id="weatherIcon" class="main-icon floating main-weather-svg">${getWeatherSVG(data.weather[0].icon)}</div>`;
+        }
+
         document.getElementById("date").innerText = new Date().toLocaleDateString(lang, { weekday: 'long', day: 'numeric', month: 'long' });
 
         const fmt = t => new Date(t * 1000).toLocaleTimeString(lang, { hour: '2-digit', minute: '2-digit' });
@@ -153,7 +454,7 @@ async function checkWeather() {
 
         const fRes = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${currentCity}&appid=${apiKey}&units=${units}&lang=${lang}`);
         const fData = await fRes.json();
-        renderHourly(fData.list);
+        renderHourly(fData.list, units);
         render5Day(fData.list, lang);
 
     } catch (e) { console.error(e); }
@@ -191,16 +492,46 @@ async function getAirQuality(lat, lon, lang) {
     document.getElementById("aqi-progress").style.backgroundColor = status[1];
 }
 
-function renderHourly(list) {
+/* ══════════════════════════════════
+   ПОЧАСОВОЙ ПРОГНОЗ (улучшенный)
+══════════════════════════════════ */
+function renderHourly(list, units) {
     const container = document.getElementById("hourlyList");
     if (!container) return;
     container.innerHTML = "";
-    list.slice(0, 10).forEach(item => {
-        const time = new Date(item.dt * 1000).getHours() + ":00";
-        container.innerHTML += `<div class="hour-item"><span>${time}</span><img src="https://openweathermap.org/img/wn/${item.weather[0].icon}.png"><b>${Math.round(item.main.temp)}°</b></div>`;
+
+    // Берём 12 часов вместо 10
+    list.slice(0, 12).forEach((item, i) => {
+        const date = new Date(item.dt * 1000);
+        const hours = date.getHours();
+        const timeLabel = hours.toString().padStart(2, '0') + ":00";
+
+        // Определяем день/ночь для метки
+        const isNightTime = hours < 6 || hours >= 21;
+        const period = isNightTime ? 'night' : 'day';
+
+        // Вероятность дождя
+        const pop = item.pop ? Math.round(item.pop * 100) : 0;
+        const popHtml = pop > 20
+            ? `<span class="hour-pop">💧 ${pop}%</span>`
+            : '';
+
+        const svgIcon = getWeatherSVG(item.weather[0].icon);
+        const unitLabel = units === 'metric' ? '°C' : '°F';
+
+        container.innerHTML += `
+            <div class="hour-item ${i === 0 ? 'hour-item--now' : ''} hour-item--${period}">
+                <span class="hour-time">${i === 0 ? 'Сейчас' : timeLabel}</span>
+                <div class="hour-icon">${svgIcon}</div>
+                <b class="hour-temp">${Math.round(item.main.temp)}°</b>
+                ${popHtml}
+            </div>`;
     });
 }
 
+/* ══════════════════════════════════
+   ПРОГНОЗ НА 5 ДНЕЙ (с SVG)
+══════════════════════════════════ */
 function render5Day(list, lang) {
     const container = document.getElementById("fiveDayForecast");
     if (!container) return;
@@ -208,16 +539,20 @@ function render5Day(list, lang) {
     const daily = list.filter(i => i.dt_txt.includes("12:00:00"));
     daily.forEach(item => {
         const day = new Date(item.dt * 1000).toLocaleDateString(lang, { weekday: 'short', day: 'numeric' });
+        const svgIcon = getWeatherSVG(item.weather[0].icon);
         container.innerHTML += `
             <div class="forecast-item">
-                <b>${day}</b>
-                <img src="https://openweathermap.org/img/wn/${item.weather[0].icon}.png">
+                <b class="f-day">${day}</b>
+                <div class="f-icon f-icon-svg">${svgIcon}</div>
                 <span>${item.weather[0].description}</span>
-                <b style="text-align:right">${Math.round(item.main.temp)}°</b>
+                <b style="text-align:right;font-family:'Space Mono',monospace">${Math.round(item.main.temp)}°</b>
             </div>`;
     });
 }
 
+/* ══════════════════════════════════
+   СОБЫТИЯ
+══════════════════════════════════ */
 document.getElementById("btnToday").onclick = () => {
     document.getElementById("today-view").classList.add("active");
     document.getElementById("forecast-view").classList.remove("active");
