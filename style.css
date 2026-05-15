@@ -1237,3 +1237,153 @@ body {
         font-size: 11px;
     }
 }
+/* ══════════════════════════════════
+   ПРОГНОЗ НА 5 ДНЕЙ — ФИНАЛЬНЫЙ ФИX
+   Вставить в КОНЕЦ style.css
+   (старый блок .forecast-item НЕ удалять, просто дописать это)
+══════════════════════════════════ */
+
+/* Переопределяем сетку — теперь 4 колонки: день | иконка | описание | темп */
+.forecast-item {
+    display: grid !important;
+    grid-template-columns: 130px 52px 1fr auto !important;
+    align-items: center !important;
+    gap: 16px !important;
+    padding: 18px 24px !important;
+    border-radius: var(--r-md) !important;
+    background: rgba(255,255,255,0.025) !important;
+    border: 1px solid var(--border) !important;
+    transition: background 0.2s, border-color 0.2s, transform 0.18s !important;
+    cursor: default;
+}
+.forecast-item:hover {
+    background: rgba(0,212,255,0.04) !important;
+    border-color: var(--accent-border) !important;
+    transform: translateX(3px) !important;
+}
+
+/* Первый элемент (сегодня) */
+.forecast-item:first-child {
+    background: rgba(0,212,255,0.05) !important;
+    border-color: rgba(0,212,255,0.2) !important;
+}
+.forecast-item:first-child .f-day {
+    color: var(--accent) !important;
+}
+
+/* Левая колонка: день + осадки */
+.fd-left {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+.f-day {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: var(--text) !important;
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+.fd-pop {
+    font-size: 11px;
+    color: #60A5FA;
+    font-weight: 600;
+}
+
+/* Иконка — строго фиксированный размер */
+.f-icon-svg {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+}
+.f-icon-svg svg {
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+}
+.f-icon-svg .svg-sun-rays { animation: spin-slow 25s linear infinite; }
+.f-icon-svg .svg-rain,
+.f-icon-svg .svg-drizzle  { animation: rain-fall 2s ease-in-out infinite; }
+.f-icon-svg .svg-snow     { animation: snow-fall 3s ease-in-out infinite; }
+.f-icon-svg .svg-cloud    { animation: pulse-glow 5s ease-in-out infinite; }
+.f-icon-svg .svg-bolt     { animation: bolt-flash 1.5s ease-in-out infinite; }
+.f-icon-svg .svg-mist     { animation: mist-drift 3s ease-in-out infinite; }
+
+/* Описание */
+.fd-desc {
+    font-size: 14px;
+    color: var(--text-2);
+    text-transform: capitalize;
+    line-height: 1.3;
+    min-width: 0;
+}
+
+/* Температуры макс / мин */
+.fd-temps {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+.fd-max {
+    font-family: 'Space Mono', monospace;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+}
+.fd-min {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-3);
+}
+
+/* Разделитель */
+.forecast-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+}
+
+/* ── Мобайл ≤ 640px ── */
+@media (max-width: 640px) {
+    .forecast-item {
+        grid-template-columns: 80px 40px 1fr auto !important;
+        padding: 13px 14px !important;
+        gap: 10px !important;
+        border-radius: 16px !important;
+    }
+    .f-day    { font-size: 13px !important; }
+    .fd-pop   { font-size: 10px; }
+    .fd-desc  { font-size: 12px; }
+    .fd-max   { font-size: 15px; }
+    .fd-min   { font-size: 11px; }
+    .f-icon-svg {
+        width: 38px !important;
+        height: 38px !important;
+        min-width: 38px !important;
+    }
+}
+
+/* ── Очень маленькие ≤ 390px ── */
+@media (max-width: 390px) {
+    .forecast-item {
+        grid-template-columns: 68px 34px 1fr auto !important;
+        padding: 11px 12px !important;
+        gap: 8px !important;
+    }
+    .f-day  { font-size: 12px !important; }
+    .fd-max { font-size: 13px; }
+    .fd-min { font-size: 10px; }
+    .f-icon-svg {
+        width: 30px !important;
+        height: 30px !important;
+        min-width: 30px !important;
+    }
+}

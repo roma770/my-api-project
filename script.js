@@ -1,89 +1,3 @@
-/* ══════════════════════════════════════════════════════
-   КАСТОМНЫЕ ДРОПДАУНЫ — вставить В НАЧАЛО script.js
-   (перед строкой: const apiKey = ...)
-══════════════════════════════════════════════════════ */
-
-/* ── Инициализация кастомных дропдаунов ── */
-function initDropdowns() {
-    const dropdowns = document.querySelectorAll('.sf-dropdown');
-
-    dropdowns.forEach(dropdown => {
-        const trigger = dropdown.querySelector('.sf-dropdown__trigger');
-        const menu    = dropdown.querySelector('.sf-dropdown__menu');
-        const items   = dropdown.querySelectorAll('.sf-dropdown__item');
-
-        // Открыть / закрыть
-        trigger.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const isOpen = dropdown.classList.contains('is-open');
-
-            // Закрыть все остальные
-            document.querySelectorAll('.sf-dropdown.is-open').forEach(d => {
-                if (d !== dropdown) closeDropdown(d);
-            });
-
-            isOpen ? closeDropdown(dropdown) : openDropdown(dropdown);
-        });
-
-        // Выбор пункта
-        items.forEach(item => {
-            item.addEventListener('click', () => {
-                const value = item.dataset.value;
-                const label = item.dataset.label;
-                const flag  = item.dataset.flag || '';
-
-                // Обновить активный
-                items.forEach(i => i.classList.remove('sf-dropdown__item--active'));
-                item.classList.add('sf-dropdown__item--active');
-
-                // Обновить триггер
-                dropdown.dataset.value = value;
-                const labelEl = dropdown.querySelector('.sf-dropdown__label');
-                if (labelEl) labelEl.textContent = label;
-
-                // Обновить иконку флага (только для языкового дропдауна)
-                const iconEl = dropdown.querySelector('.lang-flag');
-                if (iconEl && flag) iconEl.textContent = flag;
-
-                closeDropdown(dropdown);
-
-                // Вызвать обновление погоды
-                checkWeather();
-            });
-        });
-    });
-
-    // Закрыть при клике вне
-    document.addEventListener('click', () => {
-        document.querySelectorAll('.sf-dropdown.is-open').forEach(closeDropdown);
-    });
-
-    // Закрыть при Escape
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            document.querySelectorAll('.sf-dropdown.is-open').forEach(closeDropdown);
-        }
-    });
-}
-
-function openDropdown(dropdown) {
-    dropdown.classList.add('is-open');
-    const trigger = dropdown.querySelector('.sf-dropdown__trigger');
-    trigger.setAttribute('aria-expanded', 'true');
-}
-
-function closeDropdown(dropdown) {
-    dropdown.classList.remove('is-open');
-    const trigger = dropdown.querySelector('.sf-dropdown__trigger');
-    trigger.setAttribute('aria-expanded', 'false');
-}
-
-/* ── Геттеры значений (вместо document.getElementById("langSelect").value) ── */
-function getLang()  { return document.getElementById('langDropdown').dataset.value || 'ru'; }
-function getUnits() { return document.getElementById('unitDropdown').dataset.value || 'metric'; }
-
-/* Запуск после загрузки DOM */
-document.addEventListener('DOMContentLoaded', initDropdowns);
 const apiKey = "c2e0767cf4af7a9ad2f6701d4bd02de1";
 let currentCity = "Kyiv";
 
@@ -105,7 +19,8 @@ const uiTranslations = {
         visibility: "Видимость",
         forecast_title: "Прогноз на 5 дней",
         aqi_states: ["Отлично", "Хорошо", "Средне", "Плохо", "Вредно"],
-        not_found: "Город не найден. Проверьте правильность написания!"
+        not_found: "Город не найден. Проверьте правильность написания!",
+        now: "Сейчас"
     },
     en: {
         search: "Search city...",
@@ -124,7 +39,8 @@ const uiTranslations = {
         visibility: "Visibility",
         forecast_title: "5-Day Forecast",
         aqi_states: ["Excellent", "Good", "Moderate", "Poor", "Hazardous"],
-        not_found: "City not found. Please check the spelling!"
+        not_found: "City not found. Please check the spelling!",
+        now: "Now"
     },
     de: {
         search: "Stadt suchen...",
@@ -143,7 +59,8 @@ const uiTranslations = {
         visibility: "Sichtweite",
         forecast_title: "5-Tage-Vorhersage",
         aqi_states: ["Ausgezeichnet", "Gut", "Mittel", "Schlecht", "Gefährlich"],
-        not_found: "Stadt nicht gefunden. Bitte überprüfen Sie die Schreibweise!"
+        not_found: "Stadt nicht gefunden. Bitte überprüfen Sie die Schreibweise!",
+        now: "Jetzt"
     },
     fr: {
         search: "Rechercher...",
@@ -162,7 +79,8 @@ const uiTranslations = {
         visibility: "Visibilité",
         forecast_title: "Prévisions sur 5 jours",
         aqi_states: ["Excellent", "Bon", "Modéré", "Mauvais", "Dangereux"],
-        not_found: "Ville introuvable. Veuillez vérifier l'orthographe!"
+        not_found: "Ville introuvable. Veuillez vérifier l'orthographe!",
+        now: "Maintenant"
     },
     es: {
         search: "Buscar ciudad...",
@@ -181,7 +99,8 @@ const uiTranslations = {
         visibility: "Visibilidad",
         forecast_title: "Pronóstico de 5 días",
         aqi_states: ["Excelente", "Bueno", "Moderado", "Malo", "Peligroso"],
-        not_found: "Ciudad no encontrada. ¡Por favor, compruebe la ortografía!"
+        not_found: "Ciudad no encontrada. ¡Por favor, compruebe la ortografía!",
+        now: "Ahora"
     },
     it: {
         search: "Cerca città...",
@@ -191,7 +110,7 @@ const uiTranslations = {
         sun: "Sole",
         sunrise: "Alba",
         sunset: "Tramonto",
-        aqi_title: "Qualité de l'air (AQI)",
+        aqi_title: "Qualità dell'aria (AQI)",
         aqi_desc: "La qualità dell'aria influisce sulla salute.",
         comfort: "Dettagli comfort",
         humidity: "Umidità",
@@ -200,26 +119,24 @@ const uiTranslations = {
         visibility: "Visibilità",
         forecast_title: "Previsioni 5 giorni",
         aqi_states: ["Eccellente", "Buono", "Moderato", "Scarso", "Pericoloso"],
-        not_found: "Città non trovata. Controlla l'ortografia!"
+        not_found: "Città non trovata. Controlla l'ortografia!",
+        now: "Ora"
     }
 };
 
 /* ══════════════════════════════════
-   КРАСИВЫЕ SVG-ИКОНКИ ПОГОДЫ
+   SVG ИКОНКИ
 ══════════════════════════════════ */
 function getWeatherSVG(iconCode) {
     const isNight = iconCode.endsWith('n');
     const code = iconCode.replace('d', '').replace('n', '');
 
     const svgs = {
-        // ☀️ Ясно — день
         sun: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <radialGradient id="sg" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stop-color="#FFE566"/>
-                    <stop offset="100%" stop-color="#FF9A00"/>
-                </radialGradient>
-            </defs>
+            <defs><radialGradient id="sg" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#FFE566"/>
+                <stop offset="100%" stop-color="#FF9A00"/>
+            </radialGradient></defs>
             <circle cx="32" cy="32" r="12" fill="url(#sg)" class="svg-sun-core"/>
             <g class="svg-sun-rays" stroke="#FFD230" stroke-width="2.5" stroke-linecap="round">
                 <line x1="32" y1="6"  x2="32" y2="13"/>
@@ -230,17 +147,13 @@ function getWeatherSVG(iconCode) {
                 <line x1="45.5" y1="45.5" x2="50.5" y2="50.5"/>
                 <line x1="50.5" y1="13.5" x2="45.5" y2="18.5"/>
                 <line x1="18.5" y1="45.5" x2="13.5" y2="50.5"/>
-            </g>
-        </svg>`,
+            </g></svg>`,
 
-        // 🌙 Ясно — ночь
         moon: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <radialGradient id="mg" cx="40%" cy="30%" r="60%">
-                    <stop offset="0%" stop-color="#E8D5FF"/>
-                    <stop offset="100%" stop-color="#8B5CF6"/>
-                </radialGradient>
-            </defs>
+            <defs><radialGradient id="mg" cx="40%" cy="30%" r="60%">
+                <stop offset="0%" stop-color="#E8D5FF"/>
+                <stop offset="100%" stop-color="#8B5CF6"/>
+            </radialGradient></defs>
             <path d="M38 10 C24 14 16 26 20 40 C24 54 38 60 50 56 C36 56 24 46 24 32 C24 20 32 12 44 10 Z"
                 fill="url(#mg)" class="svg-moon"/>
             <circle cx="46" cy="14" r="1.5" fill="#C4B5FD" opacity="0.8"/>
@@ -248,16 +161,13 @@ function getWeatherSVG(iconCode) {
             <circle cx="44" cy="20" r="1"   fill="#E8D5FF" opacity="0.5"/>
         </svg>`,
 
-        // ⛅ Малооблачно
         fewClouds: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <radialGradient id="sg2" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stop-color="#FFE566"/>
-                    <stop offset="100%" stop-color="#FF9A00"/>
+                    <stop offset="0%" stop-color="#FFE566"/><stop offset="100%" stop-color="#FF9A00"/>
                 </radialGradient>
                 <linearGradient id="cg2" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="#E2E8F0"/>
-                    <stop offset="100%" stop-color="#CBD5E1"/>
+                    <stop offset="0%" stop-color="#E2E8F0"/><stop offset="100%" stop-color="#CBD5E1"/>
                 </linearGradient>
             </defs>
             <circle cx="22" cy="26" r="9" fill="url(#sg2)" opacity="0.95"/>
@@ -272,16 +182,13 @@ function getWeatherSVG(iconCode) {
             <ellipse cx="42" cy="36" rx="9" ry="7" fill="url(#cg2)" class="svg-cloud"/>
         </svg>`,
 
-        // 🌙⛅ Малооблачно ночью
         fewCloudsNight: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <radialGradient id="mn" cx="40%" cy="30%" r="60%">
-                    <stop offset="0%" stop-color="#C4B5FD"/>
-                    <stop offset="100%" stop-color="#7C3AED"/>
+                    <stop offset="0%" stop-color="#C4B5FD"/><stop offset="100%" stop-color="#7C3AED"/>
                 </radialGradient>
                 <linearGradient id="cgn" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="#94A3B8"/>
-                    <stop offset="100%" stop-color="#64748B"/>
+                    <stop offset="0%" stop-color="#94A3B8"/><stop offset="100%" stop-color="#64748B"/>
                 </linearGradient>
             </defs>
             <path d="M24 12 C16 15 12 22 14 30 C16 38 24 42 32 40 C24 40 18 34 18 26 C18 18 22 14 28 12 Z"
@@ -291,16 +198,13 @@ function getWeatherSVG(iconCode) {
             <ellipse cx="42" cy="36" rx="9" ry="7" fill="url(#cgn)" class="svg-cloud"/>
         </svg>`,
 
-        // ☁️ Облачно
         clouds: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <linearGradient id="cg3" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="#94A3B8"/>
-                    <stop offset="100%" stop-color="#64748B"/>
+                    <stop offset="0%" stop-color="#94A3B8"/><stop offset="100%" stop-color="#64748B"/>
                 </linearGradient>
                 <linearGradient id="cg3b" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="#CBD5E1"/>
-                    <stop offset="100%" stop-color="#94A3B8"/>
+                    <stop offset="0%" stop-color="#CBD5E1"/><stop offset="100%" stop-color="#94A3B8"/>
                 </linearGradient>
             </defs>
             <ellipse cx="26" cy="30" rx="16" ry="12" fill="url(#cg3)" class="svg-cloud"/>
@@ -309,14 +213,10 @@ function getWeatherSVG(iconCode) {
             <ellipse cx="48" cy="36" rx="10" ry="8" fill="url(#cg3b)" class="svg-cloud"/>
         </svg>`,
 
-        // 🌧️ Дождь
         rain: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <linearGradient id="rcg" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="#64748B"/>
-                    <stop offset="100%" stop-color="#475569"/>
-                </linearGradient>
-            </defs>
+            <defs><linearGradient id="rcg" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#64748B"/><stop offset="100%" stop-color="#475569"/>
+            </linearGradient></defs>
             <ellipse cx="26" cy="24" rx="15" ry="11" fill="url(#rcg)" class="svg-cloud"/>
             <rect x="8" y="27" width="48" height="14" rx="7" fill="url(#rcg)" class="svg-cloud"/>
             <ellipse cx="38" cy="26" rx="13" ry="10" fill="url(#rcg)" class="svg-cloud"/>
@@ -330,14 +230,10 @@ function getWeatherSVG(iconCode) {
             </g>
         </svg>`,
 
-        // ⛈️ Гроза
         thunderstorm: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <linearGradient id="tg" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="#334155"/>
-                    <stop offset="100%" stop-color="#1E293B"/>
-                </linearGradient>
-            </defs>
+            <defs><linearGradient id="tg" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#334155"/><stop offset="100%" stop-color="#1E293B"/>
+            </linearGradient></defs>
             <ellipse cx="26" cy="22" rx="15" ry="11" fill="url(#tg)" class="svg-cloud"/>
             <rect x="8" y="25" width="48" height="14" rx="7" fill="url(#tg)" class="svg-cloud"/>
             <ellipse cx="38" cy="24" rx="13" ry="10" fill="url(#tg)" class="svg-cloud"/>
@@ -348,14 +244,10 @@ function getWeatherSVG(iconCode) {
             </g>
         </svg>`,
 
-        // 🌨️ Снег
         snow: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <linearGradient id="sg3" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="#94A3B8"/>
-                    <stop offset="100%" stop-color="#64748B"/>
-                </linearGradient>
-            </defs>
+            <defs><linearGradient id="sg3" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#94A3B8"/><stop offset="100%" stop-color="#64748B"/>
+            </linearGradient></defs>
             <ellipse cx="26" cy="24" rx="15" ry="11" fill="url(#sg3)" class="svg-cloud"/>
             <rect x="8" y="27" width="48" height="14" rx="7" fill="url(#sg3)" class="svg-cloud"/>
             <ellipse cx="38" cy="26" rx="13" ry="10" fill="url(#sg3)" class="svg-cloud"/>
@@ -368,7 +260,6 @@ function getWeatherSVG(iconCode) {
             </g>
         </svg>`,
 
-        // 🌫️ Туман
         mist: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
             <g class="svg-mist" stroke="#94A3B8" stroke-width="3" stroke-linecap="round" opacity="0.7">
                 <line x1="10" y1="24" x2="54" y2="24"/>
@@ -378,14 +269,10 @@ function getWeatherSVG(iconCode) {
             </g>
         </svg>`,
 
-        // 🌦️ Ливень
         drizzle: `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <linearGradient id="dg" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="#94A3B8"/>
-                    <stop offset="100%" stop-color="#64748B"/>
-                </linearGradient>
-            </defs>
+            <defs><linearGradient id="dg" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#94A3B8"/><stop offset="100%" stop-color="#64748B"/>
+            </linearGradient></defs>
             <ellipse cx="26" cy="24" rx="15" ry="11" fill="url(#dg)" class="svg-cloud"/>
             <rect x="8" y="27" width="48" height="14" rx="7" fill="url(#dg)" class="svg-cloud"/>
             <ellipse cx="38" cy="26" rx="13" ry="10" fill="url(#dg)" class="svg-cloud"/>
@@ -397,7 +284,6 @@ function getWeatherSVG(iconCode) {
         </svg>`
     };
 
-    // Маппинг кодов OWM → иконки
     if (code === '01') return isNight ? svgs.moon : svgs.sun;
     if (code === '02') return isNight ? svgs.fewCloudsNight : svgs.fewClouds;
     if (code === '03' || code === '04') return svgs.clouds;
@@ -406,7 +292,6 @@ function getWeatherSVG(iconCode) {
     if (code === '11') return svgs.thunderstorm;
     if (code === '13') return svgs.snow;
     if (code === '50') return svgs.mist;
-
     return isNight ? svgs.moon : svgs.sun;
 }
 
@@ -414,50 +299,56 @@ function getWeatherSVG(iconCode) {
    ОСНОВНАЯ ЛОГИКА
 ══════════════════════════════════ */
 async function checkWeather() {
-    const lang = document.getElementById("langSelect").value;
+    /* ── читаем значения из select (они всегда есть в DOM, просто скрыты CSS) ── */
+    const lang  = document.getElementById("langSelect").value;
     const units = document.getElementById("unitSelect").value;
-    
+
     updateInterfaceLanguage(lang);
 
     try {
-        const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${currentCity}&appid=${apiKey}&units=${units}&lang=${lang}`);
+        const res  = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${currentCity}&appid=${apiKey}&units=${units}&lang=${lang}`);
         const data = await res.json();
-        
-        if(data.cod != 200) {
-            alert(uiTranslations[lang].not_found);
+
+        if (data.cod != 200) {
+            alert(uiTranslations[lang]?.not_found || "City not found.");
             return;
         }
 
-        document.getElementById("cityName").innerText = data.name;
-        document.getElementById("temp").innerText = Math.round(data.main.temp);
-        document.getElementById("feelsLike").innerText = Math.round(data.main.feels_like);
+        document.getElementById("cityName").innerText   = data.name;
+        document.getElementById("temp").innerText       = Math.round(data.main.temp);
+        document.getElementById("feelsLike").innerText  = Math.round(data.main.feels_like);
         document.getElementById("description").innerText = data.weather[0].description;
 
-        // Используем SVG вместо PNG для главной иконки
-        const mainIconWrapper = document.getElementById("weatherIcon");
-        if (mainIconWrapper) {
-            mainIconWrapper.outerHTML = `<div id="weatherIcon" class="main-icon floating main-weather-svg">${getWeatherSVG(data.weather[0].icon)}</div>`;
+        /* Заменяем <img> на SVG-иконку */
+        const mainIconEl = document.getElementById("weatherIcon");
+        if (mainIconEl) {
+            mainIconEl.outerHTML = `<div id="weatherIcon" class="main-icon floating main-weather-svg">${getWeatherSVG(data.weather[0].icon)}</div>`;
         }
 
-        document.getElementById("date").innerText = new Date().toLocaleDateString(lang, { weekday: 'long', day: 'numeric', month: 'long' });
+        document.getElementById("date").innerText = new Date().toLocaleDateString(lang, {
+            weekday: 'long', day: 'numeric', month: 'long'
+        });
 
         const fmt = t => new Date(t * 1000).toLocaleTimeString(lang, { hour: '2-digit', minute: '2-digit' });
-        document.getElementById("sunrise").innerText = fmt(data.sys.sunrise);
-        document.getElementById("sunset").innerText = fmt(data.sys.sunset);
+        document.getElementById("sunrise").innerText    = fmt(data.sys.sunrise);
+        document.getElementById("sunset").innerText     = fmt(data.sys.sunset);
 
-        document.getElementById("humidity").innerText = data.main.humidity + "%";
-        document.getElementById("pressure").innerText = data.main.pressure + " hPa";
-        document.getElementById("wind").innerText = data.wind.speed + (units === "metric" ? " m/s" : " mph");
+        /* ── Детали комфорта ── */
+        document.getElementById("humidity").innerText   = data.main.humidity + "%";
+        document.getElementById("pressure").innerText   = data.main.pressure + " hPa";
+        document.getElementById("wind").innerText       = data.wind.speed.toFixed(1) + (units === "metric" ? " m/s" : " mph");
         document.getElementById("visibility").innerText = (data.visibility / 1000).toFixed(1) + " km";
 
         getAirQuality(data.coord.lat, data.coord.lon, lang);
 
-        const fRes = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${currentCity}&appid=${apiKey}&units=${units}&lang=${lang}`);
+        const fRes  = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${currentCity}&appid=${apiKey}&units=${units}&lang=${lang}`);
         const fData = await fRes.json();
-        renderHourly(fData.list, units);
+        renderHourly(fData.list, units, lang);
         render5Day(fData.list, lang);
 
-    } catch (e) { console.error(e); }
+    } catch (e) {
+        console.error(e);
+    }
 }
 
 function updateInterfaceLanguage(lang) {
@@ -468,60 +359,54 @@ function updateInterfaceLanguage(lang) {
         if (text[key]) el.innerText = text[key];
     });
     const input = document.querySelector('[data-i18n-placeholder]');
-    if(input) input.placeholder = text[input.getAttribute('data-i18n-placeholder')];
+    if (input) input.placeholder = text[input.getAttribute('data-i18n-placeholder')] || '';
 }
 
 async function getAirQuality(lat, lon, lang) {
-    const res = await fetch(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${apiKey}`);
-    const data = await res.json();
-    const aqi = data.list[0].main.aqi; 
-    
-    const text = uiTranslations[lang] || uiTranslations['en'];
-    const labels = text.aqi_states;
-    const states = {
-        1: [labels[0], "#a3ffb4", "20%"],
-        2: [labels[1], "#f8d800", "40%"],
-        3: [labels[2], "#ffb347", "60%"],
-        4: [labels[3], "#ff8c8c", "80%"],
-        5: [labels[4], "#ff4b2b", "100%"]
-    };
-    const status = states[aqi];
-    document.getElementById("aqi-text").innerText = status[0];
-    document.getElementById("aqi-text").style.color = status[1];
-    document.getElementById("aqi-progress").style.width = status[2];
-    document.getElementById("aqi-progress").style.backgroundColor = status[1];
+    try {
+        const res  = await fetch(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${apiKey}`);
+        const data = await res.json();
+        const aqi  = data.list[0].main.aqi;
+
+        const text   = uiTranslations[lang] || uiTranslations['en'];
+        const labels = text.aqi_states;
+        const states = {
+            1: [labels[0], "#4ade80",  "20%"],
+            2: [labels[1], "#f8d800",  "40%"],
+            3: [labels[2], "#ffb347",  "60%"],
+            4: [labels[3], "#ff8c8c",  "80%"],
+            5: [labels[4], "#ff4b2b", "100%"]
+        };
+        const status = states[aqi];
+        const aqiEl  = document.getElementById("aqi-text");
+        const aqiBar = document.getElementById("aqi-progress");
+        if (aqiEl)  { aqiEl.innerText = status[0]; aqiEl.style.color = status[1]; }
+        if (aqiBar) { aqiBar.style.width = status[2]; aqiBar.style.backgroundColor = status[1]; }
+    } catch(e) { console.error(e); }
 }
 
 /* ══════════════════════════════════
-   ПОЧАСОВОЙ ПРОГНОЗ (улучшенный)
+   ПОЧАСОВОЙ ПРОГНОЗ
 ══════════════════════════════════ */
-function renderHourly(list, units) {
+function renderHourly(list, units, lang) {
     const container = document.getElementById("hourlyList");
     if (!container) return;
     container.innerHTML = "";
 
-    // Берём 12 часов вместо 10
+    const nowLabel = uiTranslations[lang]?.now || "Now";
+
     list.slice(0, 12).forEach((item, i) => {
-        const date = new Date(item.dt * 1000);
-        const hours = date.getHours();
+        const date      = new Date(item.dt * 1000);
+        const hours     = date.getHours();
         const timeLabel = hours.toString().padStart(2, '0') + ":00";
-
-        // Определяем день/ночь для метки
         const isNightTime = hours < 6 || hours >= 21;
-        const period = isNightTime ? 'night' : 'day';
-
-        // Вероятность дождя
-        const pop = item.pop ? Math.round(item.pop * 100) : 0;
-        const popHtml = pop > 20
-            ? `<span class="hour-pop">💧 ${pop}%</span>`
-            : '';
-
-        const svgIcon = getWeatherSVG(item.weather[0].icon);
-        const unitLabel = units === 'metric' ? '°C' : '°F';
+        const pop       = item.pop ? Math.round(item.pop * 100) : 0;
+        const popHtml   = pop > 20 ? `<span class="hour-pop">💧 ${pop}%</span>` : '';
+        const svgIcon   = getWeatherSVG(item.weather[0].icon);
 
         container.innerHTML += `
-            <div class="hour-item ${i === 0 ? 'hour-item--now' : ''} hour-item--${period}">
-                <span class="hour-time">${i === 0 ? 'Сейчас' : timeLabel}</span>
+            <div class="hour-item ${i === 0 ? 'hour-item--now' : ''} hour-item--${isNightTime ? 'night' : 'day'}">
+                <span class="hour-time">${i === 0 ? nowLabel : timeLabel}</span>
                 <div class="hour-icon">${svgIcon}</div>
                 <b class="hour-temp">${Math.round(item.main.temp)}°</b>
                 ${popHtml}
@@ -530,15 +415,16 @@ function renderHourly(list, units) {
 }
 
 /* ══════════════════════════════════
-   ПРОГНОЗ НА 5 ДНЕЙ (с SVG)
+   ПРОГНОЗ НА 5 ДНЕЙ
 ══════════════════════════════════ */
 function render5Day(list, lang) {
     const container = document.getElementById("fiveDayForecast");
     if (!container) return;
     container.innerHTML = "";
+
     const daily = list.filter(i => i.dt_txt.includes("12:00:00"));
     daily.forEach(item => {
-        const day = new Date(item.dt * 1000).toLocaleDateString(lang, { weekday: 'short', day: 'numeric' });
+        const day     = new Date(item.dt * 1000).toLocaleDateString(lang, { weekday: 'short', day: 'numeric' });
         const svgIcon = getWeatherSVG(item.weather[0].icon);
         container.innerHTML += `
             <div class="forecast-item">
@@ -569,16 +455,16 @@ document.getElementById("btn5Days").onclick = () => {
 
 function search() {
     const val = document.getElementById("cityInput").value.trim();
-    if(val) { 
-        currentCity = val; 
-        checkWeather(); 
-        document.getElementById("cityInput").value = ""; 
+    if (val) {
+        currentCity = val;
+        checkWeather();
+        document.getElementById("cityInput").value = "";
     }
 }
 
 document.getElementById("searchBtn").onclick = search;
-document.getElementById("cityInput").onkeydown = e => { if(e.key === "Enter") search(); };
-document.getElementById("langSelect").onchange = checkWeather;
-document.getElementById("unitSelect").onchange = checkWeather;
+document.getElementById("cityInput").onkeydown = e => { if (e.key === "Enter") search(); };
+document.getElementById("langSelect").onchange  = checkWeather;
+document.getElementById("unitSelect").onchange  = checkWeather;
 
 checkWeather();
