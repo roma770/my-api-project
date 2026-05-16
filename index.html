@@ -255,5 +255,10 @@
         </main>
     </div>
     <script src="script.js?v=10"></script>
+    <script>
+window.onerror = function(msg, url, line) {
+    document.body.innerHTML += '<div style="background:red;color:white;padding:20px;font-size:16px;position:fixed;top:0;left:0;right:0;z-index:9999">' + msg + ' (line ' + line + ')</div>';
+};
+</script>
 </body>
 </html>
