@@ -7,159 +7,28 @@
     <link rel="stylesheet" href="style.css?v=10">
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* ── КРИТИЧЕСКИЕ МОБИЛЬНЫЕ ФИКСЫ (inline, чтобы точно применились) ── */
-
-        .apple-nav {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 16px;
-            width: 100%;
-        }
-
-        .search-container {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .quick-settings {
-            display: flex;
-            gap: 8px;
-            flex-shrink: 0;
-        }
-
-        /* Hero всегда по центру */
-        .hero-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            width: 100%;
-        }
-
-        .hero-visual {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-        }
-
-        .temp-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* Детали комфорта — всегда flex */
-        .c-item {
-            display: flex !important;
-            justify-content: space-between !important;
-            align-items: center !important;
-            width: 100% !important;
-        }
-
-        .c-item b {
-            display: block !important;
-            text-align: right !important;
-            min-width: 80px !important;
-        }
-
-        @media (max-width: 640px) {
-            .sf-wrapper {
-                padding: 14px 14px 40px;
-                overflow-x: hidden;
-            }
-
-            /* Шапка — всё в одну строку */
-            .apple-nav {
-                flex-wrap: nowrap;
-            }
-
-            .sf-select {
-                width: 52px !important;
-                height: 44px !important;
-                font-size: 11px !important;
-                border-radius: 14px !important;
-                display: block !important;
-            }
-
-            /* Hero */
-            .hero-card {
-                padding: 24px 16px !important;
-                gap: 10px !important;
-                min-height: auto !important;
-            }
-
-            .hero-header h1 { font-size: 26px !important; }
-
-            .main-icon,
-            .main-weather-svg {
-                width: 100px !important;
-                height: 100px !important;
-            }
-
-            #temp {
-                font-size: 76px !important;
-                letter-spacing: -4px !important;
-            }
-
-            .degree-top {
-                font-size: 26px !important;
-                margin-top: 8px !important;
-            }
-
-            /* Виджеты */
-            .widgets-container {
-                display: flex !important;
-                flex-direction: column !important;
-                gap: 12px !important;
-            }
-
-            .widget {
-                padding: 16px !important;
-                border-radius: 18px !important;
-            }
-
-            /* Почасовой */
-            .hour-item {
-                min-width: 68px !important;
-                padding: 10px 8px !important;
-            }
-
-            .hour-icon {
-                width: 36px !important;
-                height: 36px !important;
-            }
-
-            /* Солнце + AQI рядом */
-            .small-widgets {
-                display: grid !important;
-                grid-template-columns: 1fr 1fr !important;
-                gap: 12px !important;
-            }
-
-            /* Детали комфорта */
-            .c-item span { font-size: 13px !important; }
-            .c-item b    { font-size: 13px !important; }
-
-            /* Прогноз 5 дней */
-            .forecast-item {
-                grid-template-columns: 78px 38px 1fr auto !important;
-                padding: 12px 14px !important;
-                gap: 8px !important;
-            }
-
-            .f-icon-svg {
-                width: 36px !important;
-                height: 36px !important;
-                min-width: 36px !important;
-            }
-
-            .fd-max { font-size: 14px !important; }
-            .fd-min { font-size: 11px !important; }
-        }
-    </style>
+@media (max-width: 900px) {
+    #today-view {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    .hero-card {
+        width: 100% !important;
+        align-items: center !important;
+        text-align: center !important;
+    }
+    .hero-visual {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+    .c-item {
+        display: flex !important;
+        justify-content: space-between !important;
+    }
+    .c-item b { display: block !important; }
+}
+</style>
 </head>
 <body>
     <div class="sf-wrapper">
