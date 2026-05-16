@@ -422,16 +422,49 @@ function render5Day(list, lang) {
     if (!container) return;
     container.innerHTML = "";
 
-    const daily = list.filter(i => i.dt_txt.includes("12:00:00"));
-    daily.forEach(item => {
-        const day     = new Date(item.dt * 1000).toLocaleDateString(lang, { weekday: 'short', day: 'numeric' });
-        const svgIcon = getWeatherSVG(item.weather[0].icon);
+    // Группируем по дням и берём мин/макс температуру
+    const dayMap = {};
+    list.forEach(item => {
+        const dateKey = item.dt_txt.split(" ")[0];
+        if (!dayMap[dateKey]) {
+            dayMap[dateKey] = { items: [], noon: null };
+        }
+        dayMap[dateKey].items.push(item);
+        if (item.dt_txt.includes("12:00:00")) {
+            dayMap[dateKey].noon = item;
+        }
+    });
+
+    const days = Object.keys(dayMap).slice(0, 5);
+
+    days.forEach((dateKey, idx) => {
+        const dayData  = dayMap[dateKey];
+        const rep      = dayData.noon || dayData.items[Math.floor(dayData.items.length / 2)];
+        const temps    = dayData.items.map(i => i.main.temp);
+        const tMin     = Math.round(Math.min(...temps));
+        const tMax     = Math.round(Math.max(...temps));
+        const svgIcon  = getWeatherSVG(rep.weather[0].icon);
+        const desc     = rep.weather[0].description;
+        const pop      = Math.round((rep.pop || 0) * 100);
+        const popHtml  = pop > 20 ? `<span class="fd-pop">💧 ${pop}%</span>` : '';
+
+        const dateObj  = new Date(rep.dt * 1000);
+        const dayLabel = idx === 0
+            ? (uiTranslations[lang]?.today || 'Сегодня')
+            : dateObj.toLocaleDateString(lang, { weekday: 'short', day: 'numeric' });
+
         container.innerHTML += `
             <div class="forecast-item">
-                <b class="f-day">${day}</b>
+                <div class="fd-left">
+                    <b class="f-day">${dayLabel}</b>
+                    ${popHtml}
+                </div>
                 <div class="f-icon f-icon-svg">${svgIcon}</div>
-                <span>${item.weather[0].description}</span>
-                <b style="text-align:right;font-family:'Space Mono',monospace">${Math.round(item.main.temp)}°</b>
+                <span class="fd-desc">${desc}</span>
+                <div class="fd-temps">
+                    <b class="fd-max">${tMax}°</b>
+                    <span class="fd-min">${tMin}°</span>
+                </div>
             </div>`;
     });
 }
