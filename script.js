@@ -332,12 +332,15 @@ async function checkWeather() {
         const fmt = t => new Date(t * 1000).toLocaleTimeString(lang, { hour: '2-digit', minute: '2-digit' });
         document.getElementById("sunrise").innerText    = fmt(data.sys.sunrise);
         document.getElementById("sunset").innerText     = fmt(data.sys.sunset);
+    const humEl  = document.getElementById("humidity");
+    const presEl = document.getElementById("pressure");
+    const winEl  = document.getElementById("wind");
+    const visEl  = document.getElementById("visibility");
 
-        /* ── Детали комфорта ── */
-        document.getElementById("humidity").innerText   = data.main.humidity + "%";
-        document.getElementById("pressure").innerText   = data.main.pressure + " hPa";
-        document.getElementById("wind").innerText       = data.wind.speed.toFixed(1) + (units === "metric" ? " m/s" : " mph");
-        document.getElementById("visibility").innerText = (data.visibility / 1000).toFixed(1) + " km";
+if (humEl)  humEl.textContent  = data.main.humidity + "%";
+if (presEl) presEl.textContent = data.main.pressure + " hPa";
+if (winEl)  winEl.textContent  = data.wind.speed.toFixed(1) + (units === "metric" ? " m/s" : " mph");
+if (visEl)  visEl.textContent  = (data.visibility / 1000).toFixed(1) + " km";
 
         getAirQuality(data.coord.lat, data.coord.lon, lang);
 
